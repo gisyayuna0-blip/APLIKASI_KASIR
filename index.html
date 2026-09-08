@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeCart - Aplikasi Penjualan Modern</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Library QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --navy: #0f172a;
+            --navy-light: #1e293b;  
+            --purple: #7c3aed;
+            --purple-dark: #6d28d9;
+            --pink: #ec4899;
+            --light-bg: #f8fafc;
+            --text-light: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #334155;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link {
+            color: #94a3b8;
+            border-radius: 8px;
+            margin: 5px 10px;
+            padding: 12px 15px;
+            transition: 0.3s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(124, 58, 237, 0.2);
+            color: var(--text-light);
+        }
+
+        .sidebar .nav-link.active {
+            background: linear-gradient(90deg, var(--purple) 0%, var(--pink) 100%);
+            color: var(--text-light);
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        .sidebar .nav-link i { margin-right: 10px; font-size: 1.1rem; }
+
+        .sidebar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-light);
+            padding: 20px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        .sidebar-brand i { color: var(--pink); }
+
+        .navbar-light {
+            background-color: #ffffff;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.1);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+        }
+        .stat-card .icon-box {
+            font-size: 2.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(90deg, var(--purple) 0%, var(--pink) 100%);
+            color: white;
+            font-weight: bold;
+            border: none;
+        }
+        .btn-primary-custom:hover {
+            opacity: 0.9;
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+        .btn-primary-custom:disabled {
+            opacity: 0.5;
+            background: #94a3b8;
+        }
+
+        #qrcode {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            border: 1px dashed var(--purple);
+            padding: 15px;
+            border-radius: 8px;
+            min-height: 150px;
+            align-items: center;
+            background-color: #fff;
+        }
+        #qrcode img {
+            border: 5px solid #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .table-img-thumb {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .table-img-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .edit-mode {
+            border: 2px solid var(--pink) !important;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3) !important;
+        }
+
+        /* Styling Khusus Halaman Pemesanan */
+        .product-pick-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fff;
+            transition: 0.2s;
+        }
+        .product-pick-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-2px);
+        }
+        .product-pick-card img {
+            width: 60px; height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .cart-item:last-child { border-bottom: none; }
+
+        /* Styling Metode Pembayaran */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        .payment-option { cursor: pointer; }
+        .payment-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: 0.2s;
+            position: relative;
+            background: #fff;
+            height: 100%;
+        }
+        .payment-card i { font-size: 1.5rem; color: #64748b; }
+        .check-icon {
+            position: absolute; top: 5px; right: 5px;
+            color: var(--purple); display: none; font-size: 1rem;
+        }
+        .payment-option input:checked ~ .payment-card {
+            border-color: var(--purple);
+            background-color: rgba(124, 58, 237, 0.05);
+            box-shadow: 0 2px 10px rgba(124, 58, 237, 0.1);
+        }
+        .payment-option input:checked ~ .payment-card i { color: var(--purple); }
+        .payment-option input:checked ~ .payment-card .check-icon { display: block; }
+
+        .out-of-stock {
+            opacity: 0.6;
+            pointer-events: none; /* Mencegah klik */
+        }
+
+        @media (max-width: 767.98px) {
+            .sidebar {
+                position: fixed; top: 0; left: -100%;
+                width: 250px; z-index: 1050; height: 100vh;
+            }
+            .sidebar.active { left: 0; }
+            .content-wrapper { width: 100%; }
+            #sidebarCollapse { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification Container -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
+        <div id="appToast" class="toast align-items-center text-white border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">Data berhasil disimpan!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Delete -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel"><i class="bi bi-exclamation-triangle-fill text-danger"></i> Konfirmasi Hapus</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus produk ini? Data yang sudah dihapus tidak bisa dikembalikan.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pop-up QR Code -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel"><i class="bi bi-qr-code-scan text-primary"></i> QR Code Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h5 class="fw-bold mb-1" id="qrModalNama">-</h5>
+                    <p class="text-muted mb-3" id="qrModalKode">Kode: -</p>
+                    <div id="qrModalImageContainer" style="display: inline-block; padding: 15px; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff;">
+                    </div>
+                    <p class="mt-3 small text-muted">Scan QR Code di atas untuk verifikasi produk.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" id="qrDownloadLink" class="btn btn-primary-custom" download>
+                        <i class="bi bi-download"></i> Download QR
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-brand">
+                    <i class="bi bi-gem"></i> LuxeCart
+                </div>
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item"><a class="nav-link active" onclick="showPage('dashboard', this)"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage('input', this)"><i class="bi bi-plus-circle-fill"></i> Input Produk</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage('pemesanan', this)"><i class="bi bi-bag-check-fill"></i> Pemesanan</a></li>
+                    <li class="nav-item"><a class="nav-link" onclick="showPage('list', this)"><i class="bi bi-list-ul"></i> List Produk</a></li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="col-md-9 col-lg-10 ms-sm-auto px-md-4 content-wrapper">
+                <nav class="navbar navbar-light py-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-dark d-md-none me-2" id="sidebarCollapse"><i class="bi bi-list"></i></button>
+                        <h4 class="mb-0 fw-bold text-dark" id="page-title">Dashboard</h4>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <span class="me-3 d-none d-sm-block text-muted">Selamat Datang, Admin</span>
+                        <img src="https://via.placeholder.com/40x40/7c3aed/ffffff?text=A" class="rounded-circle" alt="Admin">
+                    </div>
+                </nav>
+
+                <!-- Halaman Dashboard -->
+                <section id="dashboard">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card stat-card p-4 h-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><p class="mb-1 opacity-75">Total Pendapatan</p><h3 class="mb-0">Rp 25.000.000</h3></div>
+                                    <div class="icon-box"><i class="bi bi-cash-stack"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card stat-card p-4 h-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><p class="mb-1 opacity-75">Total Pesanan</p><h3 class="mb-0">120</h3></div>
+                                    <div class="icon-box"><i class="bi bi-cart-check-fill"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card stat-card p-4 h-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><p class="mb-1 opacity-75">Total Produk</p><h3 class="mb-0" id="totalProduk">0</h3></div>
+                                    <div class="icon-box"><i class="bi bi-box-seam"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xl-3">
+                            <div class="card stat-card p-4 h-100">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div><p class="mb-1 opacity-75">Pelanggan Baru</p><h3 class="mb-0">15</h3></div>
+                                    <div class="icon-box"><i class="bi bi-people-fill"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Halaman Input Produk -->
+                <section id="input" style="display: none;">
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="card p-4 mb-4" id="formCard">
+                                <h5 class="mb-3 text-dark fw-bold"><i class="bi bi-pencil-square text-primary"></i> Data Produk</h5>
+                                <form id="formProduk">
+                                    <input type="hidden" id="editId" value="">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-medium">Nama Produk</label>
+                                        <input type="text" class="form-control" id="namaProduk" placeholder="Masukkan Nama Produk" required>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Harga Satuan</label>
+                                            <input type="number" class="form-control" id="hargaSatuan" placeholder="Rp 0" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Stok Produk</label>
+                                            <input type="number" class="form-control" id="stokProduk" placeholder="0" required>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">Kode Produk</label>
+                                            <input type="text" class="form-control" id="kodeProduk" placeholder="Contoh: PRD-001" required oninput="generateQRPreview()">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-medium">URL Gambar</label>
+                                            <input type="url" class="form-control" id="urlGambar" placeholder="https://...">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-4">
+                                        <button type="submit" class="btn btn-primary-custom flex-grow-1" id="btnSubmit"><i class="bi bi-save"></i> Simpan & Buat QR</button>
+                                        <button type="button" class="btn btn-outline-secondary" onclick="resetForm()"><i class="bi bi-arrow-clockwise"></i> Reset</button>
+                                        <button type="button" class="btn btn-outline-danger" id="cancelEditBtn" style="display:none;" onclick="resetForm()"><i class="bi bi-x-circle"></i> Batal Edit</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Tabel Data Produk Tersimpan -->
+                            <div class="card p-4">
+                                <h5 class="mb-3 text-dark fw-bold"><i class="bi bi-database-fill text-primary"></i> Data Produk Tersimpan</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Kode</th><th>Nama Produk</th><th>Harga</th><th>Stok</th><th>QR Code</th><th class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tableDataProduk">
+                                            <tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div><br>Memuat data...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <div class="card p-4 sticky-top" style="top: 20px;">
+                                <h5 class="mb-3 text-center text-dark fw-bold"><i class="bi bi-qr-code text-primary"></i> QR Code Produk</h5>
+                                <div id="qrcode"><small class="text-muted">Isi Kode Produk untuk generate QR...</small></div>
+                                <div class="mt-3 text-center" id="previewInfo" style="display:none;">
+                                    <h6 class="mb-0 fw-bold" id="previewNama">-</h6>
+                                    <small class="text-muted" id="previewKode">-</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Halaman Pemesanan -->
+                <section id="pemesanan" style="display: none;">
+                    <div class="row g-4">
+                        <!-- Kiri: Pilih Produk -->
+                        <div class="col-lg-8">
+                            <div class="card p-4">
+                                <h5 class="mb-4 fw-bold"><i class="bi bi-bag-plus-fill text-primary"></i> Langkah 1: Pilih Produk</h5>
+                                <div class="row g-3" id="orderProductList">
+                                    <!-- List produk akan dirender disini -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kanan: Rincian Pesanan & Pembayaran -->
+                        <div class="col-lg-4">
+                            <div class="card p-4 sticky-top" style="top: 20px;">
+                                <h5 class="mb-3 fw-bold"><i class="bi bi-receipt text-primary"></i> Rincian Pesanan Anda</h5>
+                                <div id="cartItems" style="max-height: 200px; overflow-y: auto;">
+                                    <p class="text-muted text-center py-4">Belum ada produk dipilih.</p>
+                                </div>
+                                <hr class="my-3">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Subtotal</span>
+                                    <span class="fw-medium" id="cartSubtotal">Rp 0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">Ongkir</span>
+                                    <span class="fw-medium" id="cartShipping">Rp 0</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span class="text-muted">Diskon</span>
+                                    <span class="fw-medium text-danger" id="cartDiscount">- Rp 0</span>
+                                </div>
+                                <hr class="my-3">
+                                <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
+                                    <span>Total</span>
+                                    <span class="text-primary" id="cartTotal">Rp 0</span>
+                                </div>
+
+                                <h6 class="fw-bold mt-4 mb-3"><i class="bi bi-credit-card text-primary"></i> Metode Pembayaran</h6>
+                                <div class="payment-methods mb-4">
+                                    <label class="payment-option">
+                                        <input type="radio" name="paymentMethod" value="Bank Transfer" class="d-none" onchange="selectPayment(this)">
+                                        <div class="payment-card">
+                                            <i class="bi bi-bank"></i>
+                                            <span>Bank Transfer</span>
+                                            <i class="bi bi-check-circle-fill check-icon"></i>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="payment-option">
+                                        <input type="radio" name="paymentMethod" value="QRIS" class="d-none" onchange="selectPayment(this)">
+                                        <div class="payment-card">
+                                            <i class="bi bi-qr-code"></i>
+                                            <span>QRIS</span>
+                                            <i class="bi bi-check-circle-fill check-icon"></i>
+                                        </div>
+                                    </label>
+
+                                    <label class="payment-option">
+                                        <input type="radio" name="paymentMethod" value="E-Wallet" class="d-none" onchange="selectPayment(this)">
+                                        <div class="payment-card">
+                                            <i class="bi bi-wallet2"></i>
+                                            <span>E-Wallet</span>
+                                            <i class="bi bi-check-circle-fill check-icon"></i>
+                                        </div>
+                                    </label>
+
+                                    <label class="payment-option">
+                                        <input type="radio" name="paymentMethod" value="COD" class="d-none" onchange="selectPayment(this)">
+                                        <div class="payment-card">
+                                            <i class="bi bi-cash-coin"></i>
+                                            <span>COD</span>
+                                            <i class="bi bi-check-circle-fill check-icon"></i>
+                                        </div>
+                                    </label>
+                                </div>
+
+                                <button class="btn btn-primary-custom w-100" id="processOrderBtn" disabled onclick="processOrder()">
+                                    <i class="bi bi-check2-circle"></i> Proses Pesanan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Halaman List Produk -->
+                <section id="list" style="display: none;">
+                    <div class="card p-4">
+                        <div class="d-flex justify-content-between mb-4 flex-wrap gap-2">
+                            <h5 class="mb-0 text-dark fw-bold">List Produk</h5>
+                            <div class="input-group" style="max-width: 300px;">
+                                <span class="input-group-text bg-light border-0"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control bg-light border-0" placeholder="Cari produk..." oninput="searchProduct(this.value)">
+                            </div>
+                        </div>
+                        <div class="row g-4" id="listProdukContainer"></div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // =========================================================
+        // KONFIGURASI API GOOGLE SPREADSHEET
+        // =========================================================
+        const API_URL = "https://script.google.com/macros/s/AKfycbxB5uliNAWTfhqAkZP_7-HNwCZkH15MC7Px3mJ27D6Pgmfo_c3G769tmUfSUNKVdUyN/exec"; 
+
+        // === STATE MANAGEMENT ===
+        let dbProduk = [];
+        let editId = null;
+        let deleteTargetId = null;
+        let cart = []; 
+        const SHIPPING_FEE = 15000;
+        let selectedPaymentMethod = null;
+
+        // === SETUP TOAST & MODAL ===
+        const toastEl = document.getElementById('appToast');
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        function showToast(message, bgClass = 'bg-success') {
+            document.getElementById('toastMessage').innerText = message;
+            toastEl.className = `toast align-items-center text-white border-0 ${bgClass}`;
+            toast.show();
+        }
+
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+
+        const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+
+        // === FUNGSI NAVIGASI ===
+        function showPage(pageId, element) {
+            document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(pageId).style.display = 'block';
+
+            const titles = { 'dashboard': 'Dashboard', 'input': 'Input & Data Produk', 'pemesanan': 'Pemesanan Produk', 'list': 'List Produk' };
+            document.getElementById('page-title').innerText = titles[pageId];
+
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => link.classList.remove('active'));
+            if(element) element.classList.add('active');
+
+            if (window.innerWidth < 768) document.getElementById('sidebar').classList.remove('active');
+            if(pageId === 'list') renderCardProduk();
+            if(pageId === 'input') renderTableProduk();
+            if(pageId === 'pemesanan') renderOrderProducts();
+            if(pageId === 'dashboard') updateDashboardStat();
+        }
+
+        // === GENERATE QR PREVIEW REALTIME ===
+        function generateQRPreview() {
+            const kode = document.getElementById('kodeProduk').value;
+            const nama = document.getElementById('namaProduk').value;
+            const qrContainer = document.getElementById('qrcode');
+            const previewInfo = document.getElementById('previewInfo');
+            
+            qrContainer.innerHTML = "";
+            if(kode.trim() !== "") {
+                new QRCode(qrContainer, { text: kode, width: 150, height: 150, colorDark : "#0f172a", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
+                previewInfo.style.display = 'block';
+                document.getElementById('previewNama').innerText = nama || "Nama Produk";
+                document.getElementById('previewKode').innerText = kode;
+            } else {
+                qrContainer.innerHTML = '<small class="text-muted">Isi Kode Produk untuk generate QR...</small>';
+                previewInfo.style.display = 'none';
+            }
+        }
+
+        // === FUNGSI POP UP QR CODE ===
+        function showQrPopup(kode, nama) {
+            document.getElementById('qrModalNama').innerText = nama;
+            document.getElementById('qrModalKode').innerText = "Kode: " + kode;
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${kode}`;
+            document.getElementById('qrModalImageContainer').innerHTML = `<img src="${qrUrl}" alt="QR ${kode}" style="width: 250px; height: 250px;">`;
+            document.getElementById('qrDownloadLink').href = qrUrl;
+            qrModal.show();
+        }
+
+        // === FUNGSI CRUD (Sesuai Apps Script) ===
+        async function loadProducts() {
+            if (API_URL) {
+                try {
+                    const response = await fetch(`${API_URL}?action=read`);
+                    const resJson = await response.json();
+                    if(resJson.success) {
+                        dbProduk = resJson.data;
+                    } else {
+                        dbProduk = [];
+                    }
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                    showToast("Gagal memuat data dari server.", "bg-danger");
+                    dbProduk = [];
+                }
+            } else {
+                dbProduk = JSON.parse(localStorage.getItem('dbProduk')) || [];
+            }
+        }
+
+        document.getElementById('formProduk').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const dataInput = {
+                NAMA_PRODUK: document.getElementById('namaProduk').value,
+                HARGA_SATUAN: parseInt(document.getElementById('hargaSatuan').value),
+                STOK_PRODUK: parseInt(document.getElementById('stokProduk').value),
+                KODE_PRODUK: document.getElementById('kodeProduk').value,
+                URL_GAMBAR: document.getElementById('urlGambar').value || `https://via.placeholder.com/500x500/7c3aed/ffffff?text=${encodeURIComponent(document.getElementById('namaProduk').value)}`
+            };
+
+            if (API_URL) {
+                try {
+                    const payload = {
+                        action: editId ? 'update' : 'create',
+                        data: dataInput
+                    };
+                    if(editId) payload.id = editId;
+
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    showToast(editId ? "Produk berhasil diperbarui!" : "Produk baru berhasil disimpan!", editId ? "bg-primary" : "bg-success");
+                } catch (error) {
+                    showToast("Gagal menyimpan ke server.", "bg-danger");
+                    return;
+                }
+            } else {
+                if(editId) {
+                    const index = dbProduk.findIndex(p => p.ID_RING == editId);
+                    if(index !== -1) dbProduk[index] = { ...dbProduk[index], ...dataInput };
+                } else {
+                    dbProduk.push({ ID_RING: Date.now(), ...dataInput });
+                }
+                localStorage.setItem('dbProduk', JSON.stringify(dbProduk));
+                showToast(editId ? "Produk berhasil diperbarui!" : "Produk baru berhasil disimpan!", editId ? "bg-primary" : "bg-success");
+            }
+
+            resetForm();
+            await loadProducts(); 
+            renderTableProduk();
+            updateDashboardStat();
+        });
+
+        function resetForm() {
+            document.getElementById('formProduk').reset();
+            editId = null;
+            document.getElementById('btnSubmit').innerHTML = '<i class="bi bi-save"></i> Simpan & Buat QR';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('formCard').classList.remove('edit-mode');
+            generateQRPreview();
+        }
+
+        function renderTableProduk() {
+            const tbody = document.getElementById('tableDataProduk');
+            tbody.innerHTML = "";
+
+            if(dbProduk.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">Belum ada data produk tersimpan.</td></tr>';
+                return;
+            }
+
+            dbProduk.forEach(p => {
+                const formatHarga = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(p.HARGA_SATUAN);
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${p.KODE_PRODUK}`;
+                const stokColor = p.STOK_PRODUK <= 0 ? 'text-danger' : 'text-dark';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${p.KODE_PRODUK}</strong></td>
+                        <td>${p.NAMA_PRODUK}</td>
+                        <td>${formatHarga}</td>
+                        <td class="fw-bold ${stokColor}">${p.STOK_PRODUK}</td>
+                        <td>
+                            <img src="${qrUrl}" alt="QR" class="table-img-thumb" onclick="showQrPopup('${p.KODE_PRODUK}', '${p.NAMA_PRODUK}')" title="Klik untuk perbesar">
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-warning me-1" onclick="editProduk('${p.ID_RING}')" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="triggerDelete('${p.ID_RING}')" title="Hapus"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function editProduk(id) {
+            const p = dbProduk.find(p => String(p.ID_RING) === String(id));
+            if(!p) return;
+
+            editId = p.ID_RING;
+            document.getElementById('namaProduk').value = p.NAMA_PRODUK;
+            document.getElementById('hargaSatuan').value = p.HARGA_SATUAN;
+            document.getElementById('stokProduk').value = p.STOK_PRODUK;
+            document.getElementById('kodeProduk').value = p.KODE_PRODUK;
+            document.getElementById('urlGambar').value = p.URL_GAMBAR || '';
+
+            document.getElementById('btnSubmit').innerHTML = '<i class="bi bi-check-circle"></i> Update Produk';
+            document.getElementById('cancelEditBtn').style.display = 'block';
+            document.getElementById('formCard').classList.add('edit-mode');
+            
+            generateQRPreview();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function triggerDelete(id) {
+            deleteTargetId = id;
+            deleteModal.show();
+        }
+
+        async function confirmDelete() {
+            if(deleteTargetId === null) return;
+            
+            if (API_URL) {
+                try {
+                    const payload = { action: 'delete', id: deleteTargetId };
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                } catch (error) {
+                    showToast("Gagal menghapus dari server.", "bg-danger");
+                    deleteModal.hide();
+                    return;
+                }
+            } else {
+                dbProduk = dbProduk.filter(p => p.ID_RING != deleteTargetId);
+                localStorage.setItem('dbProduk', JSON.stringify(dbProduk));
+            }
+
+            deleteModal.hide();
+            showToast("Produk berhasil dihapus!", "bg-danger");
+            deleteTargetId = null;
+            
+            await loadProducts();
+            renderTableProduk();
+            renderCardProduk();
+            updateDashboardStat();
+        }
+
+        function renderCardProduk(keyword = "") {
+            const container = document.getElementById('listProdukContainer');
+            container.innerHTML = "";
+
+            const filteredProduk = dbProduk.filter(p => 
+                p.NAMA_PRODUK.toLowerCase().includes(keyword.toLowerCase()) || 
+                p.KODE_PRODUK.toLowerCase().includes(keyword.toLowerCase())
+            );
+
+            if(filteredProduk.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center text-muted py-5">Produk tidak ditemukan.</div>';
+                return;
+            }
+
+            filteredProduk.forEach(p => {
+                const formatHarga = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(p.HARGA_SATUAN);
+                const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${p.KODE_PRODUK}`;
+                const isOut = p.STOK_PRODUK <= 0;
+                
+                container.innerHTML += `
+                    <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="card h-100">
+                            <img src="${p.URL_GAMBAR}" class="card-img-top" alt="${p.NAMA_PRODUK}" style="height: 200px; object-fit: cover; border-radius: 15px 15px 0 0;">
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="card-title mb-0 fw-bold text-dark">${p.NAMA_PRODUK}</h6>
+                                        <small class="text-muted">Kode: ${p.KODE_PRODUK}</small>
+                                    </div>
+                                    <img src="${qrUrl}" alt="QR" style="width: 50px; height: 50px; border: 1px solid #eee; border-radius: 5px; padding: 2px; background: #fff;">
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+                                    <h6 class="text-primary mb-0 fw-bold">${formatHarga}</h6>
+                                    <span class="badge ${isOut ? 'bg-danger' : 'bg-light text-dark border'}">Stok: ${p.STOK_PRODUK}</span>
+                                </div>
+                                <div class="d-flex gap-2 mt-auto">
+                                    <button class="btn btn-sm btn-outline-warning flex-grow-1" onclick="editProduk('${p.ID_RING}'); showPage('input', document.querySelector('.nav-link[onclick*=\\'input\\']'))"><i class="bi bi-pencil"></i> Edit</button>
+                                    <button class="btn btn-sm btn-outline-danger flex-grow-1" onclick="triggerDelete('${p.ID_RING}')"><i class="bi bi-trash"></i> Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function searchProduct(keyword) { renderCardProduk(keyword); }
+        function updateDashboardStat() { document.getElementById('totalProduk').innerText = dbProduk.length; }
+
+        // =============================================
+        // === LOGICA PEMESANAN & SISTEM STOK BARU ===
+        // =============================================
+        
+        function renderOrderProducts() {
+            const container = document.getElementById('orderProductList');
+            if(dbProduk.length === 0) {
+                container.innerHTML = '<div class="col-12 text-center text-muted py-5">Produk kosong. Silakan tambah produk di menu Input Produk.</div>';
+                return;
+            }
+
+            container.innerHTML = "";
+            dbProduk.forEach(p => {
+                const formatHarga = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(p.HARGA_SATUAN);
+                const isOut = p.STOK_PRODUK <= 0;
+                
+                container.innerHTML += `
+                    <div class="col-md-6">
+                        <div class="product-pick-card ${isOut ? 'out-of-stock' : ''}">
+                            <img src="${p.URL_GAMBAR}" alt="${p.NAMA_PRODUK}">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0 fw-bold">${p.NAMA_PRODUK}</h6>
+                                <small class="text-muted d-block">${formatHarga} • Stok: ${isOut ? '<span class="text-danger fw-bold">Habis</span>' : p.STOK_PRODUK}</small>
+                            </div>
+                            <button class="btn btn-sm btn-primary-custom" onclick="addToCart('${p.ID_RING}')" ${isOut ? 'disabled' : ''}>
+                                <i class="bi ${isOut ? 'bi-x-circle' : 'bi-plus-lg'}"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addToCart(id) {
+            const product = dbProduk.find(p => p.ID_RING == id);
+            if(!product) return;
+            
+            const existingItem = cart.find(item => item.id == id);
+            if(existingItem && existingItem.qty >= product.STOK_PRODUK) {
+                showToast("Stok produk tidak mencukupi!", "bg-danger");
+                return;
+            }
+
+            if(existingItem) {
+                existingItem.qty++;
+            } else {
+                cart.push({ id: id, nama: product.NAMA_PRODUK, harga: product.HARGA_SATUAN, qty: 1 });
+            }
+            renderCart();
+        }
+
+        function removeFromCart(id) {
+            const item = cart.find(item => item.id == id);
+            if(item) {
+                item.qty--;
+                if(item.qty <= 0) {
+                    cart = cart.filter(i => i.id != id);
+                }
+            }
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItems');
+            const btnProcess = document.getElementById('processOrderBtn');
+            
+            if(cart.length === 0) {
+                container.innerHTML = '<p class="text-muted text-center py-4">Belum ada produk dipilih.</p>';
+                btnProcess.disabled = true;
+            } else {
+                btnProcess.disabled = (selectedPaymentMethod === null);
+                
+                container.innerHTML = "";
+                cart.forEach(item => {
+                    container.innerHTML += `
+                        <div class="cart-item">
+                            <div>
+                                <h6 class="mb-0 small fw-bold">${item.nama}</h6>
+                                <small class="text-muted">Rp ${item.harga.toLocaleString('id-ID')} x ${item.qty}</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart('${item.id}')"><i class="bi bi-dash"></i></button>
+                                <span class="fw-bold">${item.qty}</span>
+                                <button class="btn btn-sm btn-outline-success" onclick="addToCart('${item.id}')"><i class="bi bi-plus"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            let subtotal = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+            let shipping = cart.length > 0 ? SHIPPING_FEE : 0;
+            let discount = 0; 
+            let total = subtotal + shipping - discount;
+
+            const fmt = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format;
+
+            document.getElementById('cartSubtotal').innerText = fmt(subtotal);
+            document.getElementById('cartShipping').innerText = fmt(shipping);
+            document.getElementById('cartDiscount').innerText = `- ${fmt(discount)}`;
+            document.getElementById('cartTotal').innerText = fmt(total);
+        }
+
+        function selectPayment(radioBtn) {
+            selectedPaymentMethod = radioBtn.value;
+            renderCart(); 
+        }
+
+        // SISTEM PEMROSESAN PESANAN & PENGURANGAN STOK
+        async function processOrder() {
+            if(cart.length === 0) {
+                showToast("Keranjang masih kosong!", "bg-danger");
+                return;
+            }
+            if(selectedPaymentMethod === null) {
+                showToast("Silakan pilih metode pembayaran!", "bg-danger");
+                return;
+            }
+
+            let total = cart.reduce((sum, item) => sum + (item.harga * item.qty), 0) + SHIPPING_FEE;
+            showToast(`Memproses pesanan Rp ${total.toLocaleString('id-ID')}...`, "bg-primary");
+
+            // --- LOGIKA PENGURANGAN STOK ---
+            if (API_URL) {
+                try {
+                    for (const item of cart) {
+                        const product = dbProduk.find(p => p.ID_RING == item.id);
+                        if (product) {
+                            const newStock = parseInt(product.STOK_PRODUK) - item.qty;
+                            
+                            // Susun payload untuk update
+                            const payload = {
+                                action: 'update',
+                                id: item.id,
+                                data: {
+                                    NAMA_PRODUK: product.NAMA_PRODUK,
+                                    HARGA_SATUAN: product.HARGA_SATUAN,
+                                    STOK_PRODUK: newStock, // Stok dikurangi
+                                    KODE_PRODUK: product.KODE_PRODUK,
+                                    URL_GAMBAR: product.URL_GAMBAR
+                                }
+                            };
+
+                            await fetch(API_URL, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                body: JSON.stringify(payload)
+                            });
+                        }
+                    }
+                    showToast(`Pesanan berhasil diproses & stok diperbarui!`, "bg-success");
+                } catch (error) {
+                    showToast("Gagal memperbarui stok di server.", "bg-danger");
+                }
+            } else {
+                // Logika LocalStorage
+                cart.forEach(item => {
+                    const index = dbProduk.findIndex(p => p.ID_RING == item.id);
+                    if (index !== -1) {
+                        dbProduk[index].STOK_PRODUK -= item.qty;
+                    }
+                });
+                localStorage.setItem('dbProduk', JSON.stringify(dbProduk));
+                showToast(`Pesanan berhasil diproses & stok diperbarui!`, "bg-success");
+            }
+
+            // Reset keranjang & form pembayaran
+            cart = []; 
+            selectedPaymentMethod = null;
+            const checkedRadio = document.querySelector('input[name="paymentMethod"]:checked');
+            if (checkedRadio) checkedRadio.checked = false;
+
+            // Muat ulang data dari server/database untuk mendapat stok terbaru
+            await loadProducts();
+            renderTableProduk();
+            renderOrderProducts(); // Render ulang list produk agar stok hilang/habis terlihat
+            renderCart();
+        }
+
+        // Toggle Sidebar Mobile
+        document.getElementById('sidebarCollapse').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // === INISIALISASI APLIKASI ===
+        window.onload = async function() {
+            await loadProducts();
+            updateDashboardStat();
+        };
+    </script>
+</body>
+</html>
